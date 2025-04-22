@@ -1,9 +1,14 @@
 import { View, Text, StyleSheet, TextInput, Alert } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { AuthContext } from "../../context/authContext";
 import InputBox from "../../components/Form/InputBox";
 import SubmitButton from "../../components/Form/SubmitButton";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from "axios";
 
 const Login = ( {navigation} ) => {
+  //global state
+  const [state, setState] = useContext(AuthContext);
   //state
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -12,7 +17,7 @@ const Login = ( {navigation} ) => {
   //func
 
   //btnfunc
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     try {
       setLoading(true);
       if (!email || !password) {
@@ -21,12 +26,27 @@ const Login = ( {navigation} ) => {
         return; 
       }
       setLoading(false);
+      const { data } = await axios.post(
+        "/auth/login",
+        { email, password }
+      );
+      setState(data);
+      await AsyncStorage.setItem('@auth',JSON.stringify(data));
+      alert(data && data.message);
+      navigation.navigate("Home");
       console.log("Login data==>", { email, password });
     } catch (error) {
+      alert(error.response.data.message);
       setLoading(false);
       console.log(error);
     }
   };
+  //temp func to chk local str data
+  const getLocalStorageData = async () => {
+    let data = await AsyncStorage.getItem('@auth')
+    console.log('Local Storage ===>', data);
+  };
+  getLocalStorageData();
   return (
     <View style={styles.container}>
       <Text style={styles.pageTitle}>Login</Text>
@@ -67,7 +87,6 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       justifyContent: "center",
-      marginHorizontal: 20,
       backgroundColor: "#e1d5c9",
     },
     pageTitle: {

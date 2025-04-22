@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet, TextInput, Alert } from "react-native";
 import React, { useState } from "react";
+import axios from "axios";
 import InputBox from "../../components/Form/InputBox";
 import SubmitButton from "../../components/Form/SubmitButton";
 
@@ -14,17 +15,24 @@ const Register = ({ navigation }) => {
   //func
 
   //btnfunc
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     try {
       setLoading(true);
       if (!name || !email || !password) {
         Alert.alert("fill all field");
         setLoading(false);
-        return; 
+        return;
       }
       setLoading(false);
+      const { data } = await axios.post(
+        "/auth/register",
+        { name, email, password }
+      );
+      alert(data && data.message);
+      navigation.navigate("Login");
       console.log("register data==>", { name, email, password });
     } catch (error) {
+      alert(error.response.data.message);
       setLoading(false);
       console.log(error);
     }
@@ -56,10 +64,10 @@ const Register = ({ navigation }) => {
         handleSubmit={handleSubmit}
       />
       <Text style={styles.linkText}>
-        Already Register Please {" "}
-        <Text style={styles.link}
-        onPress={()=>navigation.navigate("Login")}>
-          Login</Text>{" "}
+        Already Register Please{" "}
+        <Text style={styles.link} onPress={() => navigation.navigate("Login")}>
+          Login
+        </Text>{" "}
       </Text>
     </View>
   );
@@ -87,12 +95,12 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     color: "#af9f85",
   },
-  linkText:{
-    textAlign:"center",
+  linkText: {
+    textAlign: "center",
   },
-  link:{
-    color:"red",
-  }
+  link: {
+    color: "red",
+  },
 });
 
 export default Register;
