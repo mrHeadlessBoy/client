@@ -6,32 +6,36 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { PostContext } from "../context/postContext";
 import FooterMenu from "../components/Menus/FooterMenu";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import axios from "axios";
 
 const Post = ({ navigation }) => {
-  //local satet
+  // global state
+  const [posts, setPosts] = useContext(PostContext);
+  // local state
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [description, setDecription] = useState("");
   const [loading, setLoading] = useState(false);
-  //handle form data to post
+
+  //handle form data post DATA
   const handlePost = async () => {
     try {
       setLoading(true);
-      //validate
-      if (!title || !description) {
-        alert("add post and desciption before post");
+      if (!title) {
+        alert("Please add post title ");
       }
       if (!description) {
-        alert("add desciption before post");
+        alert("Please add post  description");
       }
       const { data } = await axios.post("/post/create-post", {
         title,
         description,
       });
       setLoading(false);
+      setPosts([...posts, data?.post]);
       alert(data?.message);
       navigation.navigate("Home");
     } catch (error) {
@@ -40,34 +44,33 @@ const Post = ({ navigation }) => {
       console.log(error);
     }
   };
-
   return (
     <View style={styles.container}>
       <ScrollView>
         <View style={{ alignItems: "center" }}>
           <Text style={styles.heading}>Create a post</Text>
           <TextInput
+            style={styles.inputBox}
             placeholder="add post title"
-            style={styles.inputbox}
             placeholderTextColor={"gray"}
             value={title}
             onChangeText={(text) => setTitle(text)}
           />
           <TextInput
-            placeholder="add post descript"
-            style={styles.inputbox}
+            style={styles.inputBox}
+            placeholder="add post description"
             placeholderTextColor={"gray"}
             multiline={true}
             numberOfLines={6}
             value={description}
-            onChangeText={(text) => setDescription(text)}
+            onChangeText={(text) => setDecription(text)}
           />
         </View>
         <View style={{ alignItems: "center" }}>
-          <TouchableOpacity style={styles.postbtn} onPress={handlePost}>
-            <Text style={styles.postbtntxt}>
+          <TouchableOpacity style={styles.postBtn} onPress={handlePost}>
+            <Text style={styles.postBtnText}>
               <FontAwesome5 name="plus-square" size={18} /> {"  "}
-              POST
+              Create post
             </Text>
           </TouchableOpacity>
         </View>
@@ -78,32 +81,30 @@ const Post = ({ navigation }) => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "space-between",
+    margin: 10,
     marginTop: 40,
   },
   heading: {
-    color: "blue",
     fontSize: 25,
     fontWeight: "bold",
     textTransform: "uppercase",
   },
-  inputbox: {
-    backgroundColor: "#fff",
+  inputBox: {
+    backgroundColor: "#ffffff",
     textAlignVertical: "top",
     paddingTop: 10,
     width: 320,
     marginTop: 30,
     fontSize: 16,
-    paddingLeft: 17,
+    paddingLeft: 15,
     borderColor: "gray",
     borderWidth: 1,
     borderRadius: 10,
   },
-  postbtn: {
+  postBtn: {
     backgroundColor: "black",
     width: 300,
     marginTop: 30,
@@ -112,11 +113,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  postbtntxt: {
-    color: "#fff",
+  postBtnText: {
+    color: "#ffffff",
     fontSize: 18,
     fontWeight: "bold",
   },
 });
-
 export default Post;

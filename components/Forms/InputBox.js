@@ -7,7 +7,7 @@ const InputBox = ({
   keyboardType,
   secureTextEntry = false,
   value,
-  setValue
+  setValue,
 }) => {
   return (
     <View>
@@ -19,7 +19,7 @@ const InputBox = ({
         autoComplete={autoComplete}
         secureTextEntry={secureTextEntry}
         value={value}
-        onChangeText={(text)=>setValue(text)}
+        onChangeText={(text) => setValue(text)}
       />
     </View>
   );
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
   inputBox: {
     height: 40,
     marginBottom: 20,
-    backgroundColor: "#fff",
+    backgroundColor: "#ffffff",
     borderRadius: 10,
     marginTop: 10,
     paddingLeft: 10,

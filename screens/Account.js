@@ -26,15 +26,11 @@ const Account = () => {
   const handleUpdate = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.put(
-        "/auth/update-user",
-        {
-          name,
-          password,
-          email,
-        },
-        
-      );
+      const { data } = await axios.put("/auth/update-user", {
+        name,
+        password,
+        email,
+      });
       setLoading(false);
       let UD = JSON.stringify(data);
       setState({ ...state, user: UD?.updatedUser });
